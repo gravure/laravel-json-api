@@ -13,6 +13,6 @@
         "illuminate/database": "5.4.*"
     },
     "require-dev": {
-        
+        "orchestra/testbench": "^3.4"
     }
 }
