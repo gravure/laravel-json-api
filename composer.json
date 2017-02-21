@@ -1,6 +1,7 @@
 {
     "name": "gravure/laravel-json-api",
     "description": "Native integration of the Json API specification.",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Gravure\\Api\\": "src/"
