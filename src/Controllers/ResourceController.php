@@ -16,6 +16,7 @@ abstract class ResourceController extends Controller
 {
     use ParsesPaginationRequests;
     use ParsesIncludesRequests;
+
     /**
      * @var SerializerInterface
      */
