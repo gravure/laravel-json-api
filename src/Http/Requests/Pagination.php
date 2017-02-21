@@ -1,6 +1,6 @@
 <?php
 
-namespace Gravure\Api\Requests;
+namespace Gravure\Api\Http\Requests;
 
 use Gravure\Api\Http\Request;
 

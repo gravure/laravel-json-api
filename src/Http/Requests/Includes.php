@@ -1,6 +1,6 @@
 <?php
 
-namespace Gravure\Api\Requests;
+namespace Gravure\Api\Http\Requests;
 
 use Gravure\Api\Http\Request;
 
@@ -19,6 +19,9 @@ class Includes
         $this->request = $request;
     }
 
+    /**
+     * @return array
+     */
     public function get(): array
     {
         $include = $this->request->query('include');

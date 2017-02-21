@@ -2,8 +2,6 @@
 
 namespace Gravure\Api\Http;
 
-use Gravure\Api\Requests\Includes;
-use Gravure\Api\Requests\Pagination;
 use Illuminate\Http\Request as Http;
 
 class Request extends Http
@@ -13,11 +11,11 @@ class Request extends Http
      */
     public function pagination()
     {
-        return new Pagination($this);
+        return new Requests\Pagination($this);
     }
 
     public function includes()
     {
-        return new Includes($this);
+        return new Requests\Includes($this);
     }
 }
