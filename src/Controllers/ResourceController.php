@@ -3,8 +3,6 @@
 namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Repository;
-use Gravure\Traits\ParsesIncludesRequests;
-use Gravure\Traits\ParsesPaginationRequests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,9 +12,6 @@ use Tobscure\JsonApi\SerializerInterface;
 
 abstract class ResourceController extends Controller
 {
-    use ParsesPaginationRequests;
-    use ParsesIncludesRequests;
-
     /**
      * @var SerializerInterface
      */
