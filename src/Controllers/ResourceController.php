@@ -3,8 +3,10 @@
 namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Repository;
+use Gravure\Traits\ParsesIncludesRequests;
 use Gravure\Traits\ParsesPaginationRequests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Resource;
@@ -13,6 +15,7 @@ use Tobscure\JsonApi\SerializerInterface;
 abstract class ResourceController extends Controller
 {
     use ParsesPaginationRequests;
+    use ParsesIncludesRequests;
     /**
      * @var SerializerInterface
      */
@@ -29,18 +32,23 @@ abstract class ResourceController extends Controller
 
         $this->readPaginationRequest($query, $request);
 
-        return new Collection(
+        $document = new Collection(
             $query->get(),
             $this->serializer
         );
+
+        $document->with($this->readIncludes($request));
+
+        return new JsonResponse($document);
     }
 
     /**
      * @method GET
-     * @param $id
+     * @param Request $request
+     * @param int $id
      * @return Resource
      */
-    public function show($id)
+    public function show(Request $request, int $id)
     {
         $item = $this->repository()->find($id);
 
@@ -48,10 +56,14 @@ abstract class ResourceController extends Controller
             throw new ModelNotFoundException;
         }
 
-        return new Resource(
+        $document = new Resource(
             $item,
             $this->serializer
         );
+
+        $document->with($this->readIncludes($request));
+
+        return new JsonResponse($document);
     }
 
     /**
@@ -65,10 +77,14 @@ abstract class ResourceController extends Controller
     {
         $item = $this->repository()->create($request);
 
-        return new Resource(
+        $document = new Resource(
             $item,
             $this->serializer
         );
+
+        $document->with($this->readIncludes($request));
+
+        return new JsonResponse($document, 201);
     }
 
     /**
@@ -91,12 +107,16 @@ abstract class ResourceController extends Controller
         $item = $this->repository()->update($item, $request);
 
         if ($item) {
-            return new Resource(
+            $document = new Resource(
                 $item,
                 $this->serializer
             );
+
+            $document->with($this->readIncludes($request));
+
+            return new JsonResponse($document);
         } else {
-            abort(204);
+            return new JsonResponse(null, 204);
         }
     }
 
