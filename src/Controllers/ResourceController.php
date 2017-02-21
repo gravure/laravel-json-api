@@ -3,15 +3,17 @@
 namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Repository;
+use Gravure\Api\Http\Request;
+use Gravure\Api\Resources\Collection;
+use Gravure\Api\Traits\HandlesPagination;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Tobscure\JsonApi\Collection;
-use Tobscure\JsonApi\Resource;
 use Tobscure\JsonApi\SerializerInterface;
 
 abstract class ResourceController extends Controller
 {
+    use HandlesPagination;
+
     /**
      * @var SerializerInterface
      */
@@ -26,16 +28,14 @@ abstract class ResourceController extends Controller
     {
         $query = $this->repository()->query();
 
-        $this->readPaginationRequest($query, $request);
+        $paginator = $this->mutateQueryForPagination($query, $request);
 
-        $document = new Collection(
-            $query->get(),
+        return (new Collection(
+            $paginator->items(),
             $this->serializer
-        );
-
-        $document->with($this->readIncludes($request));
-
-        return new JsonResponse($document);
+        ))
+            ->setPaginator($paginator)
+            ->with($request->includes()->all());
     }
 
     /**
@@ -114,6 +114,11 @@ abstract class ResourceController extends Controller
         } else {
             return new JsonResponse(null, 204);
         }
+    }
+
+    public function delete(int $id)
+    {
+        return $this->repository()->delete($id);
     }
 
     /**

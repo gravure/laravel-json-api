@@ -22,7 +22,7 @@ class Includes
     /**
      * @return array
      */
-    public function get(): array
+    public function all(): array
     {
         $include = $this->request->query('include');
 

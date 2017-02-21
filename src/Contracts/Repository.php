@@ -36,4 +36,12 @@ interface Repository
      * @return Model|null
      */
     public function create(Request $request): ?Model;
+
+    /**
+     * Deletes a model, true on success or triggers an exception.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
 }
