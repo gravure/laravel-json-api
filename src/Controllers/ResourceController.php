@@ -4,6 +4,7 @@ namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Repository;
 use Gravure\Traits\ParsesPaginationRequests;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Resource;
@@ -18,6 +19,7 @@ abstract class ResourceController extends Controller
     protected $serializer;
 
     /**
+     * @method GET
      * @param Request $request
      * @return Collection
      */
@@ -34,6 +36,7 @@ abstract class ResourceController extends Controller
     }
 
     /**
+     * @method GET
      * @param $id
      * @return Resource
      */
@@ -42,13 +45,53 @@ abstract class ResourceController extends Controller
         $item = $this->repository()->find($id);
 
         if (!$item) {
-            abort(404);
+            throw new ModelNotFoundException;
         }
 
         return new Resource(
             $item,
             $this->serializer
         );
+    }
+
+    /**
+     * Creates a Model using the provided Request input.
+     *
+     * @method POST
+     * @param Request $request
+     */
+    public function create(Request $request)
+    {
+
+    }
+
+    /**
+     * Updates a Model using the provided Request input.
+     *
+     * @method PATCH
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Resource
+     */
+    public function store(Request $request, int $id)
+    {
+        $item = $this->repository()->find($id);
+
+        if (!$item) {
+            throw new ModelNotFoundException;
+        }
+
+        $item = $this->repository()->update($item, $request->all());
+
+        if ($item) {
+            return new Resource(
+                $item,
+                $this->serializer
+            );
+        } else {
+            abort(204);
+        }
     }
 
     /**
