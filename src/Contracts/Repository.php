@@ -21,11 +21,19 @@ interface Repository
     public function find(int $id): ?Model;
 
     /**
-     * Updates provides model, returns the modified model on success or null on fail.
+     * Updates provided model, returns the modified model on success or triggers an exception.
      *
      * @param Model $model
-     * @param array $input
+     * @param Request $request
      * @return Model|null
      */
-    public function update(Model $model, array $input = []): ?Model;
+    public function update(Model $model, Request $request): ?Model;
+
+    /**
+     * Creates model, returns Model on success or triggers an exception.
+     *
+     * @param Request $request
+     * @return Model|null
+     */
+    public function create(Request $request): ?Model;
 }

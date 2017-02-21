@@ -59,10 +59,16 @@ abstract class ResourceController extends Controller
      *
      * @method POST
      * @param Request $request
+     * @return Resource
      */
     public function create(Request $request)
     {
+        $item = $this->repository()->create($request);
 
+        return new Resource(
+            $item,
+            $this->serializer
+        );
     }
 
     /**
@@ -82,7 +88,7 @@ abstract class ResourceController extends Controller
             throw new ModelNotFoundException;
         }
 
-        $item = $this->repository()->update($item, $request->all());
+        $item = $this->repository()->update($item, $request);
 
         if ($item) {
             return new Resource(
