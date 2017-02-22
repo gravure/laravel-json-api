@@ -1,0 +1,15 @@
+language: php
+
+php:
+  - 7.1
+
+before_install:
+  # include prestissimo which speeds up package download
+  - composer global require hirak/prestissimo
+
+script:
+  # run the script calling unit tests and so on
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
