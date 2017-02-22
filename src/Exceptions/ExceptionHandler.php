@@ -50,7 +50,7 @@ class ExceptionHandler implements HandlerContract
             $this->processError($e)
         ]);
 
-        return new JsonResponse($document);
+        return new JsonResponse($document, $this->retrieveStatusCode($e));
     }
 
     /**
