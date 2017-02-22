@@ -6,7 +6,6 @@ use Exception;
 use Gravure\Api\Resources\Document;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\ValidationException;
 
 class ExceptionHandler implements HandlerContract
 {
@@ -80,32 +79,5 @@ class ExceptionHandler implements HandlerContract
     public function renderForConsole($output, Exception $e)
     {
         // TODO: Implement renderForConsole() method.
-    }
-
-    /**
-     * @param ValidationException $e
-     * @return array
-     */
-    protected function processValidationError(ValidationException $e)
-    {
-        return $e->validator->getMessageBag()->toArray();
-    }
-
-    /**
-     * @param Exception $e
-     * @return array
-     */
-    protected function processError(Exception $e)
-    {
-        $error = [
-            'code' => $this->retrieveStatusCode($e),
-            'title' => 'Internal server error'
-        ];
-
-        if ($this->debug) {
-            $error['detail'] = (string)$e;
-        }
-
-        return $error;
     }
 }
