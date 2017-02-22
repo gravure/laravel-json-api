@@ -3,20 +3,18 @@
 namespace Gravure\Api\Exceptions;
 
 use Exception;
-use Gravure\Api\Exceptions\Handlers\ValidationExceptionHandler;
 use Gravure\Api\Resources\Document;
-use HttpRequestMethodException;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
-use InvalidArgumentException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionHandler implements HandlerContract
 {
     protected $handlers = [
-        ValidationExceptionHandler::class
+        Handlers\ValidationExceptionHandler::class,
+        Handlers\NotFoundExceptionHandler::class,
+        Handlers\InvalidArgumentExceptionHandler::class,
+        Handlers\FallbackHandler::class
     ];
 
     /**
@@ -51,6 +49,8 @@ class ExceptionHandler implements HandlerContract
     {
         /** @var null|\Gravure\Api\Contracts\ExceptionHandler $exceptionHandler */
         $exceptionHandler = null;
+
+        $errors = null;
 
         foreach ($this->handlers as $handler) {
             $exceptionHandler = new $handler;
@@ -107,34 +107,5 @@ class ExceptionHandler implements HandlerContract
         }
 
         return $error;
-    }
-
-    /**
-     * @param Exception $e
-     * @return int
-     */
-    protected function retrieveStatusCode(Exception $e)
-    {
-        if ($e instanceof InvalidArgumentException) {
-            return 400;
-        }
-
-        if ($e instanceof ValidationException) {
-            return 400;
-        }
-
-        if ($e instanceof ModelNotFoundException) {
-            return 404;
-        }
-
-        if ($e instanceof NotFoundHttpException) {
-            return 404;
-        }
-
-        if ($e instanceof HttpRequestMethodException) {
-            return 405;
-        }
-
-        return 500;
     }
 }

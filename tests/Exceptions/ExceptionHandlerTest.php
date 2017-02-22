@@ -39,6 +39,9 @@ class ExceptionHandlerTest extends TestCase
         $this->assertTrue(Arr::has($response->json(), 'errors'));
     }
 
+    /**
+     * @test
+     */
     public function notFoundException()
     {
         $handler = new NotFoundExceptionHandler;
