@@ -3,7 +3,6 @@
 namespace Gravure\Api\Tests;
 
 use Gravure\Api\Providers\ApiProvider;
-use Gravure\Api\Tests\Controllers\DummyController;
 use Orchestra\Database\ConsoleServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
@@ -37,8 +36,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('app.debug', true);
-
-        $app['router']->resource('dummies', DummyController::class);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Gravure\Api\Exceptions;
 
 use Exception;
+use Gravure\Api\Exceptions\Handlers\ValidationExceptionHandler;
 use Gravure\Api\Resources\Document;
 use HttpRequestMethodException;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
@@ -14,6 +15,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionHandler implements HandlerContract
 {
+    protected $handlers = [
+        ValidationExceptionHandler::class
+    ];
+
     /**
      * @var bool
      */
@@ -44,13 +49,25 @@ class ExceptionHandler implements HandlerContract
      */
     public function render($request, Exception $e)
     {
+        /** @var null|\Gravure\Api\Contracts\ExceptionHandler $exceptionHandler */
+        $exceptionHandler = null;
+
+        foreach ($this->handlers as $handler) {
+            $exceptionHandler = new $handler;
+
+            if ($exceptionHandler->manages($e)) {
+                $errors = $exceptionHandler->handle($e);
+                break;
+            }
+        }
+
         $document = new Document();
 
-        $document->setErrors([
-            $this->processError($e)
-        ]);
+        if ($errors !== null) {
+            $document->setErrors($errors);
+        }
 
-        return new JsonResponse($document, $this->retrieveStatusCode($e));
+        return new JsonResponse($document, $exceptionHandler->getStatusCode());
     }
 
     /**
@@ -63,6 +80,15 @@ class ExceptionHandler implements HandlerContract
     public function renderForConsole($output, Exception $e)
     {
         // TODO: Implement renderForConsole() method.
+    }
+
+    /**
+     * @param ValidationException $e
+     * @return array
+     */
+    protected function processValidationError(ValidationException $e)
+    {
+        return $e->validator->getMessageBag()->toArray();
     }
 
     /**

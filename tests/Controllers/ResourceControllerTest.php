@@ -9,6 +9,20 @@ use Illuminate\Support\Arr;
 class ResourceControllerTest extends TestCase
 {
     /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application $app
+     *
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['router']->resource('dummies', DummyController::class);
+    }
+
+    /**
      * @test
      */
     public function index()

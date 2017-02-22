@@ -8,12 +8,15 @@ use Gravure\Api\Resources\Collection;
 use Gravure\Api\Resources\Document;
 use Gravure\Api\Resources\Item;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as IlluminateController;
 use Tobscure\JsonApi\ElementInterface;
 
 abstract class Controller extends IlluminateController
 {
+    use ValidatesRequests;
+
     /**
      * @var Serializer
      */
