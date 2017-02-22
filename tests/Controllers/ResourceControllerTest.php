@@ -12,7 +12,6 @@ class ResourceControllerTest extends TestCase
     public function index()
     {
         $response = $this->call('GET', 'dummy');
-        dd($response->json());
         $response->assertStatus(200);
     }
 }
