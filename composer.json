@@ -22,5 +22,12 @@
         "orchestra/testbench": "^3.4",
         "phpunit/phpunit": "^6.0",
         "orchestra/database": "^v3.4.0-BETA1"
-    }
+    },
+    "authors": [
+        {
+            "name": "Daniël Klabbers",
+            "email": "daniel+hyn@klabbers.email",
+            "homepage": "https://github.com/luceos"
+        }
+    ]
 }
