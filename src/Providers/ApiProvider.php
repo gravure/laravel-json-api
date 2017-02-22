@@ -3,9 +3,7 @@
 namespace Gravure\Api\Providers;
 
 use Gravure\Api\Exceptions\ExceptionHandler;
-use Gravure\Api\Exceptions\Handler;
 use Gravure\Api\Http\Request;
-use Gravure\Api\Middleware\EnrichesOutput;
 use Gravure\Api\Middleware\ReplacesRequest;
 use Illuminate\Contracts\Debug\ExceptionHandler as BindingHandler;
 use Illuminate\Contracts\Http\Kernel;
@@ -21,11 +19,13 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->singleton(BindingHandler::class, function ($app) {
-            return new ExceptionHandler($app['config']->get('app.debug'));
-        });
-        $this->app->singleton(Request::class, function ($app) {
-            return Request::createFromBase($app['request']);
-        });
+        if ($this->app['request']->accepts('application/vnd.api+json')) {
+            $this->app->singleton(BindingHandler::class, function ($app) {
+                return new ExceptionHandler($app['config']->get('app.debug'));
+            });
+            $this->app->singleton(Request::class, function ($app) {
+                return Request::createFromBase($app['request']);
+            });
+        }
     }
 }
