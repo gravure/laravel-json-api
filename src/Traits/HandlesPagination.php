@@ -4,16 +4,15 @@ namespace Gravure\Api\Traits;
 
 use Gravure\Api\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Query\Builder;
 
 trait HandlesPagination
 {
     /**
-     * @param Builder|\Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
      * @param Request $request
      * @return LengthAwarePaginator
      */
-    protected function mutateQueryForPagination(Builder &$query, Request $request): LengthAwarePaginator
+    protected function mutateQueryForPagination(&$query, Request $request): LengthAwarePaginator
     {
         $pagination = $request->pagination();
         $model = $query->getModel();

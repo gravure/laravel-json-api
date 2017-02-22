@@ -3,16 +3,15 @@
 namespace Gravure\Api\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 
 interface Repository
 {
     /**
      * Returns a pre-filtered modified Builder instance.
      *
-     * @return Builder
+     * @return \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder
      */
-    public function query(): Builder;
+    public function query();
 
     /**
      * @param int $id

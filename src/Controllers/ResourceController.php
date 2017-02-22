@@ -12,6 +12,8 @@ abstract class ResourceController extends Controller
     use HandlesPagination;
 
     /**
+     * Provides a list of items with pagination functionality.
+     *
      * @method GET
      * @return JsonResponse
      */
@@ -25,6 +27,8 @@ abstract class ResourceController extends Controller
     }
 
     /**
+     * Loads one item.
+     *
      * @method GET
      * @param int $id
      * @return JsonResponse

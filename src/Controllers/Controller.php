@@ -25,6 +25,8 @@ abstract class Controller extends IlluminateController
     protected $request;
 
     /**
+     * Generates a collection resource, that may include pagination functionality.
+     *
      * @param $collection
      * @param LengthAwarePaginator|null $paginator
      * @param int $statusCode
@@ -35,7 +37,7 @@ abstract class Controller extends IlluminateController
         LengthAwarePaginator $paginator = null,
         int $statusCode = 200
     ): JsonResponse {
-        $document = $this->document(new Collection($collection));
+        $document = $this->document(new Collection($collection, $this->serializer));
 
         if ($paginator) {
             $document->setPaginator($paginator);
@@ -45,18 +47,22 @@ abstract class Controller extends IlluminateController
     }
 
     /**
+     * Generates an item resource.
+     *
      * @param $item
      * @param int $statusCode
      * @return JsonResponse
      */
     protected function item($item, int $statusCode = 200): JsonResponse
     {
-        $document = $this->document(new Item($item));
+        $document = $this->document(new Item($item, $this->serializer));
 
         return new JsonResponse($document, $statusCode);
     }
 
     /**
+     * Generates a document based on the provided resource.
+     *
      * @param ElementInterface $element
      * @return Document
      */
@@ -68,6 +74,8 @@ abstract class Controller extends IlluminateController
     }
 
     /**
+     * Generates a generic no-content json response.
+     *
      * @param int $statusCode
      * @return JsonResponse
      */

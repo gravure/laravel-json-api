@@ -13,7 +13,14 @@
         "illuminate/routing": "5.4.*",
         "illuminate/database": "5.4.*"
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Gravure\\Api\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
-        "orchestra/testbench": "^3.4"
+        "orchestra/testbench": "^3.4",
+        "phpunit/phpunit": "^6.0",
+        "orchestra/database": "^v3.4.0-BETA1"
     }
 }
