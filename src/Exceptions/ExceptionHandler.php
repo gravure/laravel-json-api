@@ -65,6 +65,10 @@ class ExceptionHandler implements HandlerContract
         // TODO: Implement renderForConsole() method.
     }
 
+    /**
+     * @param Exception $e
+     * @return array
+     */
     protected function processError(Exception $e)
     {
         $error = [
@@ -79,6 +83,10 @@ class ExceptionHandler implements HandlerContract
         return $error;
     }
 
+    /**
+     * @param Exception $e
+     * @return int
+     */
     protected function retrieveStatusCode(Exception $e)
     {
         if ($e instanceof InvalidArgumentException) {
