@@ -19,7 +19,7 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
-        if ($this->app['request']->accepts('application/vnd.api+json')) {
+        if ($this->app['request']->wantsJson()) {
             $this->app->singleton(BindingHandler::class, function ($app) {
                 return new ExceptionHandler($app['config']->get('app.debug'));
             });
