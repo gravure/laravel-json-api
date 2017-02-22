@@ -38,7 +38,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('database.default', 'testing');
         $app['config']->set('app.debug', true);
 
-        $app['router']->resource('dummy', DummyController::class);
+        $app['router']->resource('dummies', DummyController::class);
     }
 
     /**

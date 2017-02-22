@@ -2,6 +2,7 @@
 
 namespace Gravure\Api\Contracts;
 
+use Gravure\Api\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
 interface Repository
@@ -34,7 +35,7 @@ interface Repository
      * @param Request $request
      * @return Model|null
      */
-    public function create(Request $request): ?Model;
+    public function store(Request $request): ?Model;
 
     /**
      * Deletes a model, true on success or triggers an exception.
