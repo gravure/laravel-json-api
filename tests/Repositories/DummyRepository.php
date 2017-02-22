@@ -3,7 +3,7 @@
 namespace Gravure\Api\Tests\Repositories;
 
 use Gravure\Api\Contracts\Repository;
-use Gravure\Api\Contracts\Request;
+use Gravure\Api\Http\Request;
 use Gravure\Api\Tests\Models\Dummy;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,7 +45,13 @@ class DummyRepository implements Repository
      */
     public function update(Model $model, Request $request): ?Model
     {
-        // TODO: Implement update() method.
+        $model = $model->forceFill($request->only(['name']));
+
+        if ($model->isDirty()) {
+            return $model;
+        }
+
+        return null;
     }
 
     /**
@@ -54,9 +60,13 @@ class DummyRepository implements Repository
      * @param Request $request
      * @return Model|null
      */
-    public function create(Request $request): ?Model
+    public function store(Request $request): ?Model
     {
-        // TODO: Implement create() method.
+        $model = $this->model->newInstance()->forceFill($request->only(['name']));
+
+        $model->save();
+
+        return $model;
     }
 
     /**

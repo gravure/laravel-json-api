@@ -44,11 +44,11 @@ class Pagination
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function filter(): ?string
+    public function filter(): ?array
     {
-        return $this->request->filter('filter');
+        return $this->request->filter('filter', []);
     }
 
     /**

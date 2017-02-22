@@ -4,16 +4,19 @@ namespace Gravure\Api\Exceptions;
 
 use Exception;
 use Gravure\Api\Resources\Document;
-use HttpRequestMethodException;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
-use InvalidArgumentException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionHandler implements HandlerContract
 {
+    protected $handlers = [
+        Handlers\ValidationExceptionHandler::class,
+        Handlers\NotFoundExceptionHandler::class,
+        Handlers\InvalidArgumentExceptionHandler::class,
+        Handlers\FallbackHandler::class
+    ];
+
     /**
      * @var bool
      */
@@ -44,13 +47,27 @@ class ExceptionHandler implements HandlerContract
      */
     public function render($request, Exception $e)
     {
+        /** @var null|\Gravure\Api\Contracts\ExceptionHandler $exceptionHandler */
+        $exceptionHandler = null;
+
+        $errors = null;
+
+        foreach ($this->handlers as $handler) {
+            $exceptionHandler = new $handler;
+
+            if ($exceptionHandler->manages($e)) {
+                $errors = $exceptionHandler->handle($e);
+                break;
+            }
+        }
+
         $document = new Document();
 
-        $document->setErrors([
-            $this->processError($e)
-        ]);
+        if ($errors !== null) {
+            $document->setErrors($errors);
+        }
 
-        return new JsonResponse($document, $this->retrieveStatusCode($e));
+        return new JsonResponse($document, $exceptionHandler->getStatusCode());
     }
 
     /**
@@ -63,6 +80,15 @@ class ExceptionHandler implements HandlerContract
     public function renderForConsole($output, Exception $e)
     {
         // TODO: Implement renderForConsole() method.
+    }
+
+    /**
+     * @param ValidationException $e
+     * @return array
+     */
+    protected function processValidationError(ValidationException $e)
+    {
+        return $e->validator->getMessageBag()->toArray();
     }
 
     /**
@@ -81,34 +107,5 @@ class ExceptionHandler implements HandlerContract
         }
 
         return $error;
-    }
-
-    /**
-     * @param Exception $e
-     * @return int
-     */
-    protected function retrieveStatusCode(Exception $e)
-    {
-        if ($e instanceof InvalidArgumentException) {
-            return 400;
-        }
-
-        if ($e instanceof ValidationException) {
-            return 400;
-        }
-
-        if ($e instanceof ModelNotFoundException) {
-            return 404;
-        }
-
-        if ($e instanceof NotFoundHttpException) {
-            return 404;
-        }
-
-        if ($e instanceof HttpRequestMethodException) {
-            return 405;
-        }
-
-        return 500;
     }
 }

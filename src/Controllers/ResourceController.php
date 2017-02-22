@@ -50,9 +50,9 @@ abstract class ResourceController extends Controller
      * @method POST
      * @return JsonResponse
      */
-    public function create()
+    public function store()
     {
-        $item = $this->repository()->create($this->request);
+        $item = $this->repository()->store($this->request);
 
         return $this->item($item, 201);
     }
@@ -65,7 +65,7 @@ abstract class ResourceController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function store(int $id)
+    public function update(int $id)
     {
         $item = $this->repository()->find($id);
 
@@ -86,7 +86,7 @@ abstract class ResourceController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function delete(int $id)
+    public function destroy(int $id)
     {
         $item = $this->repository()->find($id);
 
