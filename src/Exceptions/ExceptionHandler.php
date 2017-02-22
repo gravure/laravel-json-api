@@ -7,6 +7,7 @@ use Gravure\Api\Resources\Document;
 use HttpRequestMethodException;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,7 +40,7 @@ class ExceptionHandler implements HandlerContract
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Exception $e
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $e)
     {
@@ -49,7 +50,7 @@ class ExceptionHandler implements HandlerContract
             $this->processError($e)
         ]);
 
-        return $document;
+        return new JsonResponse($document);
     }
 
     /**
