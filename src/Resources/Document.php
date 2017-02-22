@@ -26,7 +26,7 @@ class Document extends RawDocument
         $this->addLink('prev', $paginator->previousPageUrl());
         $this->addLink('next', $paginator->nextPageUrl());
 
-        $this->addLink('current', $paginator->url($paginator->currentPage()));
+        $this->addLink('self', $paginator->url($paginator->currentPage()));
 
         return $this;
     }

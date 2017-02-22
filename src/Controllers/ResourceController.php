@@ -3,48 +3,33 @@
 namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Repository;
-use Gravure\Api\Http\Request;
-use Gravure\Api\Resources\Collection;
 use Gravure\Api\Traits\HandlesPagination;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Tobscure\JsonApi\SerializerInterface;
 
 abstract class ResourceController extends Controller
 {
     use HandlesPagination;
 
     /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
-
-    /**
      * @method GET
-     * @param Request $request
-     * @return Collection
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index()
     {
         $query = $this->repository()->query();
 
-        $paginator = $this->mutateQueryForPagination($query, $request);
+        $paginator = $this->mutateQueryForPagination($query, $this->request);
 
-        return (new Collection(
-            $paginator->items(),
-            $this->serializer
-        ))
-            ->setPaginator($paginator)
-            ->with($request->includes()->all());
+        return $this->collection($paginator->items(), $paginator);
     }
 
     /**
      * @method GET
-     * @param Request $request
      * @param int $id
-     * @return Resource
+     * @return JsonResponse
      */
-    public function show(Request $request, int $id)
+    public function show(int $id)
     {
         $item = $this->repository()->find($id);
 
@@ -52,35 +37,20 @@ abstract class ResourceController extends Controller
             throw new ModelNotFoundException;
         }
 
-        $document = new Resource(
-            $item,
-            $this->serializer
-        );
-
-        $document->with($this->readIncludes($request));
-
-        return new JsonResponse($document);
+        return $this->item($item);
     }
 
     /**
      * Creates a Model using the provided Request input.
      *
      * @method POST
-     * @param Request $request
-     * @return Resource
+     * @return JsonResponse
      */
-    public function create(Request $request)
+    public function create()
     {
-        $item = $this->repository()->create($request);
+        $item = $this->repository()->create($this->request);
 
-        $document = new Resource(
-            $item,
-            $this->serializer
-        );
-
-        $document->with($this->readIncludes($request));
-
-        return new JsonResponse($document, 201);
+        return $this->item($item, 201);
     }
 
     /**
@@ -88,11 +58,10 @@ abstract class ResourceController extends Controller
      *
      * @method PATCH
      *
-     * @param Request $request
      * @param int $id
-     * @return Resource
+     * @return JsonResponse
      */
-    public function store(Request $request, int $id)
+    public function store(int $id)
     {
         $item = $this->repository()->find($id);
 
@@ -100,25 +69,32 @@ abstract class ResourceController extends Controller
             throw new ModelNotFoundException;
         }
 
-        $item = $this->repository()->update($item, $request);
+        $item = $this->repository()->update($item, $this->request);
 
         if ($item) {
-            $document = new Resource(
-                $item,
-                $this->serializer
-            );
-
-            $document->with($this->readIncludes($request));
-
-            return new JsonResponse($document);
-        } else {
-            return new JsonResponse(null, 204);
+            return $this->item($item);
         }
+
+        return $this->response(204);
     }
 
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
     public function delete(int $id)
     {
-        return $this->repository()->delete($id);
+        $item = $this->repository()->find($id);
+
+        if (!$item) {
+            throw new ModelNotFoundException;
+        }
+
+        if ($this->repository()->delete($id)) {
+            return $this->response(204);
+        }
+
+        return $this->response(400);
     }
 
     /**

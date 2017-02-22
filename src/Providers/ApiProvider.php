@@ -12,7 +12,6 @@ class ApiProvider extends ServiceProvider
     public function boot()
     {
         $this->app->make(Kernel::class)
-            ->prependMiddleware(ReplacesRequest::class)
-            ->pushMiddleware(EnrichesOutput::class);
+            ->prependMiddleware(ReplacesRequest::class);
     }
 }
