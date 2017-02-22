@@ -7,6 +7,7 @@ use Gravure\Api\Resources\Document;
 use HttpRequestMethodException;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -80,6 +81,10 @@ class ExceptionHandler implements HandlerContract
     protected function retrieveStatusCode(Exception $e)
     {
         if ($e instanceof InvalidArgumentException) {
+            return 400;
+        }
+
+        if ($e instanceof ValidationException) {
             return 400;
         }
 
