@@ -6,6 +6,7 @@ php:
 before_install:
   # include prestissimo which speeds up package download
   - composer global require hirak/prestissimo
+  - composer install --prefer-dist -n
 
 script:
   # run the script calling unit tests and so on
