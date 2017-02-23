@@ -3,8 +3,8 @@
 namespace Gravure\Api\Tests\Controllers;
 
 use Gravure\Api\Controllers\Controller;
-use Gravure\Api\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class ExceptionController extends Controller
 {

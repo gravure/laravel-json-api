@@ -32,11 +32,26 @@ class ExceptionHandlerTest extends TestCase
     {
         $handler = new ValidationExceptionHandler();
 
-        $response = $this->call('POST', 'validation');
+        $json = $this->postJson('validation');
 
-        $response->assertStatus($handler->getStatusCode());
+        $json->assertStatus($handler->getStatusCode());
+        $json->isInvalid();
+        $json->assertHeader('content-type', 'application/json');
 
-        $this->assertTrue(Arr::has($response->json(), 'errors'));
+        $this->assertTrue(Arr::has($json->json(), 'errors'),
+            'Errors root property not found in payload: ' . $json->content());
+    }
+
+    /**
+     * @test
+     */
+    public function htmlValidationException()
+    {
+        $html = $this->post('validation');
+
+        // Redirects back.
+        $html->assertStatus(302);
+        $html->assertHeader('content-type', 'text/html; charset=UTF-8');
     }
 
     /**
@@ -46,8 +61,24 @@ class ExceptionHandlerTest extends TestCase
     {
         $handler = new NotFoundExceptionHandler;
 
-        $response = $this->call('GET', 'model-not-found');
+        $json = $this->getJson('model-not-found');
 
-        $response->assertStatus($handler->getStatusCode());
+        $json->assertStatus($handler->getStatusCode());
+        $json->isNotFound();
+        $json->assertHeader('content-type', 'application/json');
+    }
+
+    /**
+     * @test
+     */
+    public function htmlNotFoundException()
+    {
+        $handler = new NotFoundExceptionHandler;
+
+        $html = $this->get('model-not-found');
+
+        $html->assertStatus($handler->getStatusCode());
+        $html->isNotFound();
+        $html->assertHeader('content-type', 'text/html; charset=UTF-8');
     }
 }

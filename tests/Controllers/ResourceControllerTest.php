@@ -19,6 +19,7 @@ class ResourceControllerTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
+        $app['router']->get('dummies/view', DummyController::class . '@view');
         $app['router']->resource('dummies', DummyController::class);
     }
 
@@ -27,17 +28,16 @@ class ResourceControllerTest extends TestCase
      */
     public function index()
     {
-        $response = $this->call('GET', 'dummies');
+        $response = $this->getJson('dummies');
         $response->assertStatus(200);
     }
 
     /**
      * @test
-     * @return array
      */
     public function store()
     {
-        $response = $this->json('POST', 'dummies', [
+        $response = $this->postJson('dummies', [
             'name' => 'foo'
         ]);
 
@@ -48,19 +48,16 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals('dummies', Arr::get($dummy, 'type'));
         $this->assertEquals('foo', Arr::get($dummy, 'attributes.name'));
         $this->assertGreaterThan(0, Arr::get($dummy, 'id'));
-
-        return $dummy;
     }
 
     /**
      * @test
-     * @return array
      */
     public function update()
     {
         $original = $this->addDummy();
 
-        $response = $this->json('PATCH', "dummies/{$original->id}", [
+        $response = $this->patchJson("dummies/{$original->id}", [
             'name' => 'bar'
         ]);
 
@@ -79,11 +76,22 @@ class ResourceControllerTest extends TestCase
     {
         $original = $this->addDummy();
 
-        $response = $this->call('DELETE', "dummies/{$original->id}");
+        $response = $this->deleteJson("dummies/{$original->id}");
 
         $response->assertStatus(204);
 
         $this->assertNull(Dummy::find($original->id));
+    }
+
+    /**
+     * @test
+     */
+    public function still_allows_html()
+    {
+        $response = $this->get('dummies/view');
+
+        $response->assertStatus(200);
+        $response->assertSee('html');
     }
 
     protected function addDummy(): Dummy

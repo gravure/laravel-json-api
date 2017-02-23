@@ -7,6 +7,7 @@ use Gravure\Api\Http\Request;
 use Gravure\Api\Middleware\ReplacesRequest;
 use Illuminate\Contracts\Debug\ExceptionHandler as BindingHandler;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request as BoundRequest;
 use Illuminate\Support\ServiceProvider;
 
 class ApiProvider extends ServiceProvider
@@ -19,13 +20,15 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
-        if ($this->app['request']->wantsJson()) {
-            $this->app->singleton(BindingHandler::class, function ($app) {
-                return new ExceptionHandler($app['config']->get('app.debug'));
-            });
-            $this->app->singleton(Request::class, function ($app) {
+
+        $this->app->extend(BindingHandler::class, function ($handler, $app) {
+            return new ExceptionHandler($app);
+        });
+        $this->app->extend(BoundRequest::class, function ($request, $app) {
+            if ($request->wantsJson()) {
                 return Request::createFromBase($app['request']);
-            });
-        }
+            }
+            return $request;
+        });
     }
 }
