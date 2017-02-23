@@ -2,8 +2,8 @@
 
 namespace Gravure\Api\Traits;
 
-use Gravure\Api\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
 
 trait HandlesPagination
 {
