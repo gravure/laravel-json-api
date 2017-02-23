@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class DummyController extends ResourceController
 {
-
     public function __construct(Request $request)
     {
         $this->request = $request;

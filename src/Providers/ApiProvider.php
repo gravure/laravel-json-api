@@ -20,7 +20,6 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
-
         $this->app->extend(BindingHandler::class, function ($handler, $app) {
             return new ExceptionHandler($app);
         });

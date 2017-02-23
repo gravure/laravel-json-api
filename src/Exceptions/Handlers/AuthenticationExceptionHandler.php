@@ -11,7 +11,6 @@ use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
 class AuthenticationExceptionHandler extends AbstractHandler implements ExceptionHandler
 {
-
     protected $code = 401;
 
     /**

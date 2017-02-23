@@ -6,5 +6,4 @@ use Tobscure\JsonApi\SerializerInterface;
 
 interface Serializer extends SerializerInterface
 {
-
 }
