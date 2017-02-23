@@ -3,13 +3,13 @@
 namespace Gravure\Api\Controllers;
 
 use Gravure\Api\Contracts\Serializer;
-use Gravure\Api\Http\Request;
 use Gravure\Api\Resources\Collection;
 use Gravure\Api\Resources\Document;
 use Gravure\Api\Resources\Item;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as IlluminateController;
 use Tobscure\JsonApi\ElementInterface;
 
