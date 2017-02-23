@@ -23,9 +23,14 @@ class ApiProvider extends ServiceProvider
         $this->app->extend(BindingHandler::class, function ($handler, $app) {
             return new ExceptionHandler($app);
         });
+
+        $this->app->singleton(Request::class, function ($app) {
+            return Request::createFromBase($app['request']);
+        });
+
         $this->app->extend(BoundRequest::class, function ($request, $app) {
             if ($request->expectsJson()) {
-                return Request::createFromBase($app['request']);
+                return $app->make(Request::class);
             }
             return $request;
         });
