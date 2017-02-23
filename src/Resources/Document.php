@@ -28,8 +28,12 @@ class Document extends RawDocument
 
         $this->addLink('self', $paginator->url($paginator->currentPage()));
 
-        $this->addMeta('pages_total', $paginator->total());
+        $this->addMeta('pages_total', $paginator->lastPage());
         $this->addMeta('pages_current', $paginator->currentPage());
+
+        $this->addMeta('items_count', count($paginator->items()));
+        $this->addMeta('items_total', $paginator->total());
+        $this->addMeta('items_per_page', $paginator->perPage());
 
         return $this;
     }
