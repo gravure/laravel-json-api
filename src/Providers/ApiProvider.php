@@ -25,7 +25,7 @@ class ApiProvider extends ServiceProvider
             return new ExceptionHandler($app);
         });
         $this->app->extend(BoundRequest::class, function ($request, $app) {
-            if ($request->wantsJson()) {
+            if ($request->expectsJson()) {
                 return Request::createFromBase($app['request']);
             }
             return $request;
