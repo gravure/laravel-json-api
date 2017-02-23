@@ -10,7 +10,6 @@ use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
 class NotFoundExceptionHandler extends AbstractHandler implements ExceptionHandler
 {
-
     protected $code = 404;
 
     /**
