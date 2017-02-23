@@ -3,6 +3,7 @@
 namespace Gravure\Api\Http\Requests;
 
 use Gravure\Api\Http\Request;
+use Illuminate\Support\Arr;
 
 class Pagination
 {
@@ -56,7 +57,9 @@ class Pagination
      */
     public function number(): ?int
     {
-        return $this->request->query('page.number');
+        $number = $this->pageParam('number');
+
+        return !empty($number) ? intval($number) : null;
     }
 
     /**
@@ -65,6 +68,18 @@ class Pagination
      */
     public function size(int $default = null): ?int
     {
-        return $this->request->query('page.size', $default);
+        $size = $this->pageParam('size', $default);
+
+        return !empty($size) ? intval($size) : null;
+    }
+
+    /**
+     * @param $key
+     * @param null $default
+     * @return mixed
+     */
+    public function pageParam($key, $default = null)
+    {
+        return Arr::get($this->request->query('page'), $key, $default);
     }
 }
