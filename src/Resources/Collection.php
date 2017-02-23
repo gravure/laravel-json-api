@@ -6,5 +6,4 @@ use Tobscure\JsonApi\Collection as RawCollection;
 
 class Collection extends RawCollection
 {
-
 }

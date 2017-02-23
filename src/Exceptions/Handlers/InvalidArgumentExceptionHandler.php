@@ -8,7 +8,6 @@ use InvalidArgumentException;
 
 class InvalidArgumentExceptionHandler extends FallbackHandler implements ExceptionHandler
 {
-
     protected $code = 400;
 
     /**
