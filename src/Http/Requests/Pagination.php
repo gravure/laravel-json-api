@@ -21,7 +21,7 @@ class Pagination
     /**
      * @return Collection
      */
-    public function sort(): Collection
+    public function sort(): ?Collection
     {
         $sort = $this->request->query('sort');
 

@@ -37,9 +37,11 @@ trait HandlesPagination
             }
         }
 
-        if ($filter = $pagination->filter()) {
-            app(Dispatcher::class)->dispatch(new Filtering($query, $request, $filter));
+        $filter = $pagination->filter();
 
+        app(Dispatcher::class)->dispatch(new Filtering($query, $request, $filter));
+
+        if ($filter->isNotEmpty()) {
             $query->where(function ($q) use ($filter) {
                 foreach ($filter as $column => $search) {
                     if (is_int($search) || Str::endsWith($column, '_id')) {
@@ -49,9 +51,9 @@ trait HandlesPagination
                     }
                 }
             });
-
-            app(Dispatcher::class)->dispatch(new Filtered($query, $request));
         }
+
+        app(Dispatcher::class)->dispatch(new Filtered($query, $request));
 
         /** @var LengthAwarePaginator $paginator */
         $paginator = $query->paginate(
