@@ -38,8 +38,6 @@ trait HandlesPagination
         }
 
         if ($filter = $pagination->filter()) {
-            $query->where(function ($q) use ($filter) {
-
             app(Dispatcher::class)->dispatch(new Filtering($query, $request, $filter));
 
             $query->where(function($q) use ($filter) {
