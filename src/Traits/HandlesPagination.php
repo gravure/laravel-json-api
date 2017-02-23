@@ -2,7 +2,10 @@
 
 namespace Gravure\Api\Traits;
 
+use Gravure\Api\Events\Pagination\Filtered;
+use Gravure\Api\Events\Pagination\Filtering;
 use Gravure\Api\Http\Request;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
@@ -37,6 +40,8 @@ trait HandlesPagination
 
         if ($filter = $pagination->filter()) {
 
+            app(Dispatcher::class)->dispatch(new Filtering($query, $request, $filter));
+
             $query->where(function($q) use ($filter) {
                 foreach ($filter as $column => $search) {
                     if (is_int($search) || Str::endsWith($column, '_id')) {
@@ -46,6 +51,8 @@ trait HandlesPagination
                     }
                 }
             });
+
+            app(Dispatcher::class)->dispatch(new Filtered($query, $request));
         }
 
         /** @var LengthAwarePaginator $paginator */
