@@ -4,6 +4,7 @@ namespace Gravure\Api\Http\Requests;
 
 use Gravure\Api\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class Pagination
 {
@@ -18,9 +19,9 @@ class Pagination
     }
 
     /**
-     * @return array|null
+     * @return Collection
      */
-    public function sort(): ?array
+    public function sort(): Collection
     {
         $sort = $this->request->query('sort');
 
@@ -41,15 +42,15 @@ class Pagination
             }
         }
 
-        return $output;
+        return new Collection($output);
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function filter(): ?array
+    public function filter(): Collection
     {
-        return $this->request->query('filter', []);
+        return new Collection($this->request->query('filter', []));
     }
 
     /**

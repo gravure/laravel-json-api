@@ -17,11 +17,11 @@ abstract class Filter
     public $request;
 
     /**
-     * @var array
+     * @var \Illuminate\Support\Collection
      */
     public $filter;
 
-    public function __construct(&$query, Request $request, &$filter = [])
+    public function __construct(&$query, Request $request, &$filter)
     {
         $this->query = $query;
         $this->request = $request;
