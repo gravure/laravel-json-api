@@ -8,18 +8,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
-class NotFoundExceptionHandler implements ExceptionHandler
+class NotFoundExceptionHandler extends AbstractHandler implements ExceptionHandler
 {
 
-    /**
-     * The HTTP status code to respond with.
-     *
-     * @return int
-     */
-    public function getStatusCode(): int
-    {
-        return 404;
-    }
+    protected $code = 404;
 
     /**
      * If the exception handler is able to format a response for the provided exception,

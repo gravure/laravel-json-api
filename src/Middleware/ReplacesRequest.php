@@ -15,7 +15,7 @@ class ReplacesRequest
      */
     public function handle(Http $request, Closure $next)
     {
-        if ($request->accepts('application/vnd.api+json')) {
+        if ($request->wantsJson()) {
             return $next(Request::createFromBase($request));
         } else {
             return $next($request);

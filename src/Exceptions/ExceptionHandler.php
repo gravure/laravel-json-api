@@ -4,10 +4,12 @@ namespace Gravure\Api\Exceptions;
 
 use Exception;
 use Gravure\Api\Resources\Document;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler as HandlerContract;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 
-class ExceptionHandler implements HandlerContract
+class ExceptionHandler extends Handler implements HandlerContract
 {
     protected $handlers = [
         Handlers\ValidationExceptionHandler::class,
@@ -21,21 +23,13 @@ class ExceptionHandler implements HandlerContract
      */
     protected $debug;
 
-    public function __construct(bool $debug = false)
+    public function __construct(Container $container)
     {
-        $this->debug = $debug;
+        parent::__construct($container);
+
+        $this->debug = $container['config']->get('app.debug', false);
     }
 
-    /**
-     * Report or log an exception.
-     *
-     * @param  \Exception $e
-     * @return void
-     */
-    public function report(Exception $e)
-    {
-        // TODO: Implement report() method.
-    }
 
     /**
      * Render an exception into an HTTP response.
@@ -46,16 +40,17 @@ class ExceptionHandler implements HandlerContract
      */
     public function render($request, Exception $e)
     {
-        /** @var null|\Gravure\Api\Contracts\ExceptionHandler $exceptionHandler */
-        $exceptionHandler = null;
+        if (!$request->wantsJson()) {
+            return parent::render($request, $e);
+        }
 
         $errors = null;
 
         foreach ($this->handlers as $handler) {
-            $exceptionHandler = new $handler;
+            $handler = new $handler;
 
-            if ($exceptionHandler->manages($e)) {
-                $errors = $exceptionHandler->handle($e);
+            if ($handler->manages($e)) {
+                $errors = $handler->handle($e);
                 break;
             }
         }
@@ -66,18 +61,7 @@ class ExceptionHandler implements HandlerContract
             $document->setErrors($errors);
         }
 
-        return new JsonResponse($document, $exceptionHandler->getStatusCode());
-    }
 
-    /**
-     * Render an exception to the console.
-     *
-     * @param  \Symfony\Component\Console\Output\OutputInterface $output
-     * @param  \Exception $e
-     * @return void
-     */
-    public function renderForConsole($output, Exception $e)
-    {
-        // TODO: Implement renderForConsole() method.
+        return new JsonResponse($document, $handler->getStatusCode());
     }
 }

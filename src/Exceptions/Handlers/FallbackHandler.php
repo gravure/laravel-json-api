@@ -6,18 +6,8 @@ use Exception;
 use Gravure\Api\Contracts\ExceptionHandler;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
-class FallbackHandler implements ExceptionHandler
+class FallbackHandler extends AbstractHandler implements ExceptionHandler
 {
-
-    /**
-     * The HTTP status code to respond with.
-     *
-     * @return int
-     */
-    public function getStatusCode(): int
-    {
-        return 500;
-    }
 
     /**
      * If the exception handler is able to format a response for the provided exception,
@@ -39,6 +29,10 @@ class FallbackHandler implements ExceptionHandler
      */
     public function handle(Exception $e)
     {
-        return [(string)$e];
+        if ($this->debug) {
+            return [(string)$e];
+        }
+
+        return null;
     }
 }

@@ -7,8 +7,9 @@ use Gravure\Api\Contracts\ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
-class ValidationExceptionHandler implements ExceptionHandler
+class ValidationExceptionHandler extends AbstractHandler implements ExceptionHandler
 {
+    protected $code = 422;
 
     /**
      * If the exception handler is able to format a response for the provided exception,
@@ -31,15 +32,5 @@ class ValidationExceptionHandler implements ExceptionHandler
     public function handle(Exception $e)
     {
         return $e->validator->getMessageBag()->toArray();
-    }
-
-    /**
-     * The HTTP status code to respond with.
-     *
-     * @return int
-     */
-    public function getStatusCode(): int
-    {
-        return 400;
     }
 }

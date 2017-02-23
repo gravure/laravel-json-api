@@ -12,4 +12,12 @@ interface ExceptionHandler extends ExceptionHandlerInterface
      * @return int
      */
     public function getStatusCode(): int;
+
+    /**
+     * Enables debug.
+     *
+     * @param bool $debug
+     * @return $this
+     */
+    public function setDebug(bool $debug = true);
 }
