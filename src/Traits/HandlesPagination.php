@@ -30,7 +30,6 @@ trait HandlesPagination
         }
 
         if ($sort = $pagination->sort()) {
-
             $query->orders = [];
 
             foreach ($sort as $column => $direction) {
@@ -39,6 +38,7 @@ trait HandlesPagination
         }
 
         if ($filter = $pagination->filter()) {
+            $query->where(function ($q) use ($filter) {
 
             app(Dispatcher::class)->dispatch(new Filtering($query, $request, $filter));
 
