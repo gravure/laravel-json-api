@@ -27,7 +27,6 @@ trait HandlesPagination
         }
 
         if ($sort = $pagination->sort()) {
-
             $query->orders = [];
 
             foreach ($sort as $column => $direction) {
@@ -36,8 +35,7 @@ trait HandlesPagination
         }
 
         if ($filter = $pagination->filter()) {
-
-            $query->where(function($q) use ($filter) {
+            $query->where(function ($q) use ($filter) {
                 foreach ($filter as $column => $search) {
                     if (is_int($search) || Str::endsWith($column, '_id')) {
                         $q->where($column, $search);
