@@ -4,6 +4,7 @@ namespace Gravure\Api\Traits;
 
 use Gravure\Api\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 trait HandlesPagination
 {
@@ -26,16 +27,43 @@ trait HandlesPagination
         }
 
         if ($sort = $pagination->sort()) {
+
+            $query->orders = [];
+
             foreach ($sort as $column => $direction) {
                 $query->orderBy($column, $direction);
             }
         }
 
-        return $query->paginate(
+        if ($filter = $pagination->filter()) {
+
+            $query->where(function($q) use ($filter) {
+                foreach ($filter as $column => $search) {
+                    if (is_int($search) || Str::endsWith($column, '_id')) {
+                        $q->where($column, $search);
+                    } else {
+                        $q->where($column, 'like', "%$search%");
+                    }
+                }
+            });
+        }
+
+        /** @var LengthAwarePaginator $paginator */
+        $paginator = $query->paginate(
             $size,
             ['*'],
             'page[number]',
             $number ?: 1
         );
+
+        if ($sort) {
+            $paginator->appends('sort', $this->request->query('sort'));
+        }
+
+        if ($filter) {
+            $paginator->appends('filter', $this->request->query('filter'));
+        }
+
+        return $paginator;
     }
 }

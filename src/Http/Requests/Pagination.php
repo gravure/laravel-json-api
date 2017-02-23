@@ -49,7 +49,7 @@ class Pagination
      */
     public function filter(): ?array
     {
-        return $this->request->filter('filter', []);
+        return $this->request->query('filter', []);
     }
 
     /**
@@ -81,5 +81,14 @@ class Pagination
     public function pageParam($key, $default = null)
     {
         return Arr::get($this->request->query('page'), $key, $default);
+    }
+
+    /**
+     * @param array $except
+     * @return array
+     */
+    public function appendParams(array $except = []): array
+    {
+        return Arr::except($this->request->query(), $except);
     }
 }
