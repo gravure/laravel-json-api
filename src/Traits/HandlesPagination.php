@@ -55,7 +55,7 @@ trait HandlesPagination
 
         app(Dispatcher::class)->dispatch(new Filtered($query, $request));
 
-        $paginateMethod = config('json-api-paginate.method_name');
+        $paginateMethod = config('json-api-paginate.method_name', 'jsonPaginate');
         /** @var LengthAwarePaginator $paginator */
         $paginator = $query->{$paginateMethod}();
 
