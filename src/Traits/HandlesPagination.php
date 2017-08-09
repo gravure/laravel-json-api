@@ -55,13 +55,9 @@ trait HandlesPagination
 
         app(Dispatcher::class)->dispatch(new Filtered($query, $request));
 
+        $paginateMethod = config('json-api-paginate.method_name');
         /** @var LengthAwarePaginator $paginator */
-        $paginator = $query->paginate(
-            $size,
-            ['*'],
-            'page[number]',
-            $number ?: 1
-        );
+        $paginator = $query->{$paginateMethod}();
 
         if ($sort) {
             $paginator->appends('sort', $this->request->query('sort'));
