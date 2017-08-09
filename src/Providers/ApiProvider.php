@@ -17,6 +17,7 @@ class ApiProvider extends ServiceProvider
     {
         $this->app->make(Kernel::class)
             ->prependMiddleware(ReplacesRequest::class);
+        $this->app->register(JsonApiPaginateServiceProvider::class);
     }
 
     public function register()
