@@ -9,6 +9,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler as BindingHandler;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request as BoundRequest;
 use Illuminate\Support\ServiceProvider;
+use Spatie\JsonApiPaginate\JsonApiPaginateServiceProvider;
 
 class ApiProvider extends ServiceProvider
 {
@@ -20,6 +21,8 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
+        $this->register(JsonApiPaginateServiceProvider::class);
+
         $this->app->extend(BindingHandler::class, function ($handler, $app) {
             return new ExceptionHandler($app);
         });
