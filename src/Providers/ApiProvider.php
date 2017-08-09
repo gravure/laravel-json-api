@@ -21,7 +21,7 @@ class ApiProvider extends ServiceProvider
 
     public function register()
     {
-        $this->register(JsonApiPaginateServiceProvider::class);
+        $this->app->register(JsonApiPaginateServiceProvider::class);
 
         $this->app->extend(BindingHandler::class, function ($handler, $app) {
             return new ExceptionHandler($app);
