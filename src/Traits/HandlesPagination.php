@@ -19,15 +19,6 @@ trait HandlesPagination
     protected function mutateQueryForPagination(&$query, Request $request): LengthAwarePaginator
     {
         $pagination = $request->pagination();
-        $model = $query->getModel();
-
-        $size = $pagination->size($model->getPerPage());
-
-        $query->limit($size);
-
-        if ($number = $pagination->number()) {
-            $query->offset($number * $size);
-        }
 
         if ($sort = $pagination->sort()) {
             $query->orders = [];
@@ -58,14 +49,6 @@ trait HandlesPagination
         $paginateMethod = config('json-api-paginate.method_name', 'jsonPaginate');
         /** @var LengthAwarePaginator $paginator */
         $paginator = $query->{$paginateMethod}();
-
-        if ($sort) {
-            $paginator->appends('sort', $this->request->query('sort'));
-        }
-
-        if ($filter) {
-            $paginator->appends('filter', $this->request->query('filter'));
-        }
 
         return $paginator;
     }
