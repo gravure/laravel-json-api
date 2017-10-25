@@ -60,11 +60,11 @@ trait HandlesPagination
         $paginator = $query->{$paginateMethod}();
 
         if ($sort) {
-            $paginator->appends('sort', $this->request->query('sort'));
+            $paginator->appends('sort', $request->query('sort'));
         }
 
         if ($filter) {
-            $paginator->appends('filter', $this->request->query('filter'));
+            $paginator->appends('filter', $request->query('filter'));
         }
 
         return $paginator;
