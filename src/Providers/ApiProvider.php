@@ -24,10 +24,6 @@ class ApiProvider extends ServiceProvider
     {
         $this->app->register(JsonApiPaginateServiceProvider::class);
 
-        $this->app->extend(BindingHandler::class, function ($handler, $app) {
-            return new ExceptionHandler($app);
-        });
-
         $this->app->singleton(Request::class, function ($app) {
             return Request::createFromBase($app['request']);
         });
