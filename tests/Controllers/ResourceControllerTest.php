@@ -40,13 +40,9 @@ class ResourceControllerTest extends TestCase
      */
     public function index_paginate()
     {
-        $firstDummy = $this->addDummy();
-        $firstDummy->name = 'first';
-        $firstDummy->save();
-        $this->addDummy();
-        $thirdDummy = $this->addDummy();
-        $thirdDummy->name = 'third';
-        $thirdDummy->save();
+        $this->addDummy('first');
+        $this->addDummy('second');
+        $this->addDummy('third');
 
         // No pagination query, should return all items
         $response = $this->getJson('dummies');
@@ -100,6 +96,40 @@ class ResourceControllerTest extends TestCase
 
         $this->assertCount(1, $dummies);
         $this->assertEquals('third', Arr::get(Arr::first($dummies), 'attributes.name'));
+    }
+
+    /**
+     * @test
+     */
+    public function index_sort_asc()
+    {
+        $this->addDummy('b');
+        $this->addDummy('a');
+        $this->addDummy('c');
+
+        $response = $this->getJson('dummies?sort=name');
+        $response->assertStatus(200);
+
+        $dummiesNames = Arr::pluck(Arr::get($response->json(), 'data'), 'attributes.name');
+        $this->assertEquals(['a', 'b', 'c'], $dummiesNames);
+        $this->assertUrlQueryString(Arr::get($response->json(), 'links.last'), 'sort', 'name');
+    }
+
+    /**
+     * @test
+     */
+    public function index_sort_desc()
+    {
+        $this->addDummy('b');
+        $this->addDummy('a');
+        $this->addDummy('c');
+
+        $response = $this->getJson('dummies?sort=-name');
+        $response->assertStatus(200);
+
+        $dummiesNames = Arr::pluck(Arr::get($response->json(), 'data'), 'attributes.name');
+        $this->assertEquals(['c', 'b', 'a'], $dummiesNames);
+        $this->assertUrlQueryString(Arr::get($response->json(), 'links.last'), 'sort', '-name');
     }
 
     /**
@@ -164,10 +194,10 @@ class ResourceControllerTest extends TestCase
         $response->assertSee('html');
     }
 
-    protected function addDummy(): Dummy
+    protected function addDummy(string $name = 'foo'): Dummy
     {
         $dummy = (new Dummy)->forceFill([
-            'name' => 'foo'
+            'name' => $name,
         ]);
 
         $dummy->save();
