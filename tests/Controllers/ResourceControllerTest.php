@@ -30,6 +30,76 @@ class ResourceControllerTest extends TestCase
     {
         $response = $this->getJson('dummies');
         $response->assertStatus(200);
+
+        $this->assertArrayHasKey('data', $response->json());
+        $this->assertArrayHasKey('links', $response->json());
+    }
+
+    /**
+     * @test
+     */
+    public function index_paginate()
+    {
+        $firstDummy = $this->addDummy();
+        $firstDummy->name = 'first';
+        $firstDummy->save();
+        $this->addDummy();
+        $thirdDummy = $this->addDummy();
+        $thirdDummy->name = 'third';
+        $thirdDummy->save();
+
+        // No pagination query, should return all items
+        $response = $this->getJson('dummies');
+        $response->assertStatus(200);
+
+        $dummies = Arr::get($response->json(), 'data');
+
+        $this->assertCount(3, $dummies);
+
+        $linkFirst = Arr::get($response->json(), 'links.first');
+        $linkLast = Arr::get($response->json(), 'links.last');
+        $linkPrev = Arr::get($response->json(), 'links.prev');
+        $linkNext = Arr::get($response->json(), 'links.next');
+
+        $this->assertNotNull($linkFirst);
+        $this->assertNotNull($linkLast);
+        $this->assertNull($linkPrev);
+        $this->assertNull($linkNext);
+
+        $this->assertUrlQueryString($linkFirst, 'page.number', '1');
+        $this->assertUrlQueryString($linkLast, 'page.number', '1');
+
+        // Limit number of results
+        $response = $this->getJson('dummies?page[size]=2');
+        $response->assertStatus(200);
+
+        $dummies = Arr::get($response->json(), 'data');
+
+        $this->assertCount(2, $dummies);
+        $this->assertEquals('first', Arr::get(Arr::first($dummies), 'attributes.name'));
+
+        $linkFirst = Arr::get($response->json(), 'links.first');
+        $linkLast = Arr::get($response->json(), 'links.last');
+        $linkPrev = Arr::get($response->json(), 'links.prev');
+        $linkNext = Arr::get($response->json(), 'links.next');
+
+        $this->assertNotNull($linkFirst);
+        $this->assertNotNull($linkLast);
+        $this->assertNull($linkPrev);
+        $this->assertNotNull($linkNext);
+
+        $this->assertUrlQueryString($linkFirst, 'page.number', '1');
+        $this->assertUrlQueryString($linkLast, 'page.number', '2');
+        $this->assertUrlQueryString($linkNext, 'page.number', '2');
+
+        // Get another page
+        $response = $this->getJson('dummies?page[size]=2&page[number]=2');
+        $response->assertStatus(200);
+
+        $dummies = Arr::get($response->json(), 'data');
+
+        $this->assertCount(1, $dummies);
+        $this->assertEquals('third', Arr::get(Arr::first($dummies), 'attributes.name'));
     }
 
     /**
@@ -103,5 +173,12 @@ class ResourceControllerTest extends TestCase
         $dummy->save();
 
         return $dummy;
+    }
+
+    protected function assertUrlQueryString(string $url, string $key, string $value)
+    {
+        parse_str(Arr::last(explode('?', $url)), $parameters);
+
+        $this->assertEquals($value, Arr::get($parameters, $key));
     }
 }
