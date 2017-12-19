@@ -135,6 +135,42 @@ class ResourceControllerTest extends TestCase
     /**
      * @test
      */
+    public function index_filter_id()
+    {
+        $this->addDummy('first', 1);
+        $this->addDummy('second', 1);
+        $this->addDummy('third', 10);
+
+        $response = $this->getJson('dummies?filter[relation_id]=1');
+        $response->assertStatus(200);
+
+        $dummiesNames = Arr::pluck(Arr::get($response->json(), 'data'), 'attributes.name');
+        $this->assertCount(2, $dummiesNames);
+        $this->assertEquals(['first', 'second'], $dummiesNames);
+        $this->assertUrlQueryString(Arr::get($response->json(), 'links.last'), 'filter.relation_id', '1');
+    }
+
+    /**
+     * @test
+     */
+    public function index_filter_text()
+    {
+        $this->addDummy('gravure');
+        $this->addDummy('gravure tests stuff');
+        $this->addDummy('laravel');
+
+        $response = $this->getJson('dummies?filter[name]=gravure');
+        $response->assertStatus(200);
+
+        $dummiesNames = Arr::pluck(Arr::get($response->json(), 'data'), 'attributes.name');
+        $this->assertCount(2, $dummiesNames);
+        $this->assertEquals(['gravure', 'gravure tests stuff'], $dummiesNames);
+        $this->assertUrlQueryString(Arr::get($response->json(), 'links.last'), 'filter.name', 'gravure');
+    }
+
+    /**
+     * @test
+     */
     public function store()
     {
         $response = $this->postJson('dummies', [
@@ -194,10 +230,11 @@ class ResourceControllerTest extends TestCase
         $response->assertSee('html');
     }
 
-    protected function addDummy(string $name = 'foo'): Dummy
+    protected function addDummy(string $name = 'foo', int $relationId = null): Dummy
     {
         $dummy = (new Dummy)->forceFill([
             'name' => $name,
+            'relation_id' => $relationId,
         ]);
 
         $dummy->save();
