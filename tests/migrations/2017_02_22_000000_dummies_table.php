@@ -11,6 +11,7 @@ class DummiesTable extends Migration
         Schema::create('dummies', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->unsignedInteger('relation_id')->nullable();
             $table->timestamps();
         });
     }
