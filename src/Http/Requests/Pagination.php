@@ -56,6 +56,16 @@ class Pagination
     /**
      * @return int|null
      */
+    public function offset(): ?int
+    {
+        $offset = $this->pageParam('offset');
+
+        return !empty($offset) ? intval($offset) : null;
+    }
+
+    /**
+     * @return int|null
+     */
     public function number(): ?int
     {
         $number = $this->pageParam('number');
