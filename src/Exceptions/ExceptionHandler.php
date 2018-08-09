@@ -66,7 +66,7 @@ class ExceptionHandler extends Handler implements HandlerContract
         $errors = null;
 
         foreach ($this->handlers as $handler) {
-            $handler = new $handler;
+            $handler = (new $handler)->setDebug($this->debug);
 
             if ($handler->manages($e)) {
                 $errors = $handler->handle($e);
